@@ -7,8 +7,14 @@ import (
 	"github.com/buger/goterm"
 	term "github.com/nsf/termbox-go"
 	"time"
+	"github.com/pwaller/keyboard"
 )
 
+var(
+	running = false
+	kb keyboard.Keyboard
+	c *colly.Collector
+)
 
 const (
 	SOURCE = "https://www.fifa.com/worldcup/"
@@ -16,7 +22,32 @@ const (
 
 
 func main(){
-	c := colly.NewCollector()
+	startTerm()
+	bindKeyboard()
+	setScraping()
+	loop()
+}
+
+func startTerm(){
+	err := term.Init()
+	if err != nil {
+		panic(err)
+		term.Close()
+	}
+	running = true
+	//goterm.Clear()
+}
+
+func bindKeyboard(){
+	kb = termbox.New()
+	kb.Bind(func() {
+		term.Close()
+		running = false
+	}, "space")
+}
+
+func setScraping(){
+	c = colly.NewCollector()
 
 	selector := "div.fi-mu__item > a.fi-mu__link > div > div.fi-mu__m"
 
@@ -45,9 +76,24 @@ func main(){
 		fmt.Println()
 
 	})
-
-	c.Visit(SOURCE)
 }
+
+func loop(){
+	update := 0
+	for running {
+		//goterm.MoveCursor(1,1)
+		// kb.Poll(term.PollEvent())
+
+		c.Visit(SOURCE)
+
+		//goterm.Flush()
+		fmt.Println(update)
+		update = update + 1
+		time.Sleep(time.Second)
+	}
+}
+
+
 
 func extra() {
 	c := colly.NewCollector()
