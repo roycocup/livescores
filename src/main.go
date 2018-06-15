@@ -8,6 +8,7 @@ import (
 	term "github.com/nsf/termbox-go"
 	"time"
 	"github.com/pwaller/keyboard"
+	"os"
 )
 
 var(
@@ -43,11 +44,12 @@ func bindKeyboard(){
 	kb.Bind(func() {
 		term.Close()
 		running = false
+		os.Exit(200)
 	}, "space")
 }
 
 func setScraping(){
-	c = colly.NewCollector()
+	c = colly.NewCollector(colly.AllowURLRevisit())
 
 	selector := "div.fi-mu__item > a.fi-mu__link > div > div.fi-mu__m"
 
@@ -70,26 +72,36 @@ func setScraping(){
 		homeScore := e.ChildText(score + "> div.home")
 		awayScore := e.ChildText(score + "> div.away")
 
+
+		fmt.Println()
 		fmt.Println(homeName + " vs " + awayName + " - " + matchTime)
 		fmt.Println(homeScore + " -- " + awayScore)
 
-		fmt.Println()
-
 	})
+
+}
+
+func listenForExit(){
+	event := term.PollEvent()
+	if event.Key == term.KeyEsc{
+		os.Exit(100)
+	}
 }
 
 func loop(){
-	update := 0
+
 	for running {
-		//goterm.Clear()
+		term.Clear(term.ColorGreen, term.ColorBlack)
+		term.SetCursor(0,0)
 		//goterm.MoveCursor(1,1)
 		//kb.Poll(term.PollEvent())
+		//listenForExit()
 
 		c.Visit(SOURCE)
 
-		goterm.Flush()
-		fmt.Println(update)
-		update = update + 1
+		//goterm.Flush()
+		term.Flush()
+
 		time.Sleep(time.Second)
 	}
 }
