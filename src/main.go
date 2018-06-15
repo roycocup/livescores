@@ -35,7 +35,7 @@ func startTerm(){
 		term.Close()
 	}
 	running = true
-	//goterm.Clear()
+
 }
 
 func bindKeyboard(){
@@ -81,12 +81,13 @@ func setScraping(){
 func loop(){
 	update := 0
 	for running {
+		//goterm.Clear()
 		//goterm.MoveCursor(1,1)
-		// kb.Poll(term.PollEvent())
+		//kb.Poll(term.PollEvent())
 
 		c.Visit(SOURCE)
 
-		//goterm.Flush()
+		goterm.Flush()
 		fmt.Println(update)
 		update = update + 1
 		time.Sleep(time.Second)
