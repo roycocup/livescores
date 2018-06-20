@@ -9,7 +9,6 @@ import (
 	"time"
 	"github.com/pwaller/keyboard"
 	"os"
-	"strconv"
 )
 
 var(
@@ -68,9 +67,6 @@ func setScraping(){
 
 		info := "div.fi-mu__score-info"
 		matchTime := e.ChildText(info + "> div.fi-mu__match-time > span")
-		matchTimeInt, _ := strconv.Atoi(matchTime)
-		matchTimeInt = matchTimeInt - 2
-		matchTime = strconv.Itoa(matchTimeInt)
 
 		score := info + " > div.fi-mu__score-wrap"
 		homeScore := e.ChildText(score + "> div.home")
